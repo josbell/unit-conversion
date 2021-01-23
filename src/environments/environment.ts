@@ -5,14 +5,13 @@
 export const environment = {
   production: false,
   firebase: {
-    apiKey: '<your-key>',
-    authDomain: '<your-project-authdomain>',
-    databaseURL: '<your-database-URL>',
-    projectId: '<your-project-id>',
-    storageBucket: '<your-storage-bucket>',
-    messagingSenderId: '<your-messaging-sender-id>',
-    appId: '<your-app-id>',
-    measurementId: '<your-measurement-id>',
+    apiKey: 'AIzaSyCWrObRHOueo-bXk0lgk7sOnKL4OLrtu-k',
+    authDomain: 'unit-conversion-ea329.firebaseapp.com',
+    projectId: 'unit-conversion-ea329',
+    storageBucket: 'unit-conversion-ea329.appspot.com',
+    messagingSenderId: '497403982705',
+    appId: '1:497403982705:web:0da59da566b38eaaec3cd0',
+    measurementId: 'G-LCN4GMD9ZW',
   },
 };
 
