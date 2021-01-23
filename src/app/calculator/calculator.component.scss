@@ -1,0 +1,18 @@
+:host {
+  margin-top: 10%;
+  width: 300px;
+  form {
+    .input-group {
+      width: 145px;
+      .input-field {
+        ::ng-deep .mat-form-field-wrapper {
+          // Overriding angular material input bottom padding
+          margin-bottom: -1.2em;
+        }
+      }
+    }
+  }
+  .results {
+    margin-top: 1.25em;
+  }
+}

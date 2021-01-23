@@ -1,0 +1,57 @@
+<form [formGroup]="form" class="flex-column">
+  <div class="flex-column">
+    <mat-form-field appearance="outline">
+      <mat-select focused formControlName="conversionType">
+        <mat-option *ngFor="let conversion of conversions" [value]="conversion">
+          {{ conversion.name }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+  <div class="flex-row space-between">
+    <div class="flex-column input-group">
+      <mat-form-field appearance="outline" class="input-field">
+        <mat-label>Starting Value</mat-label>
+        <input
+          matInput
+          type="number"
+          formControlName="startingValue"
+          required
+        />
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-select formControlName="startingUnit">
+          <mat-option *ngFor="let unit of units" [value]="unit">
+            {{ unit }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <span></span>
+    <div class="flex-column input-group">
+      <mat-form-field appearance="outline" class="input-field">
+        <mat-label>Converted Value</mat-label>
+        <input
+          matInput
+          type="number"
+          formControlName="convertedValue"
+          required
+        />
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-select formControlName="convertedUnit">
+          <mat-option *ngFor="let unit of units" [value]="unit">
+            {{ unit }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
+  <button mat-raised-button color="primary" type="button" (click)="onSubmit()">
+    Check
+  </button>
+</form>
+
+<div class="results flex-column align-items-center">
+  <span>{{ isCorrect }}</span>
+</div>
