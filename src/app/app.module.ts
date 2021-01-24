@@ -10,6 +10,11 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { AngularFireModule } from '@angular/fire';
 import { environment } from 'src/environments/environment';
+import { AngularFireFunctionsModule } from '@angular/fire/functions';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+
 @NgModule({
   declarations: [AppComponent, CalculatorComponent],
   imports: [
@@ -18,9 +23,13 @@ import { environment } from 'src/environments/environment';
     MatSelectModule,
     MatInputModule,
     MatButtonModule,
+    MatCheckboxModule,
+    MatCardModule,
+    MatIconModule,
     FormsModule,
     ReactiveFormsModule,
     AngularFireModule.initializeApp(environment.firebase),
+    AngularFireFunctionsModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

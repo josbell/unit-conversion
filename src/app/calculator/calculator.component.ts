@@ -1,28 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { CalculatorService } from '../calculator.service';
-
-enum Conversions {
-  Temperature = 'TEMPERATURE',
-  Volume = 'VOLUME',
-}
-
-enum TemperatureUnits {
-  Kelvin = 'KELVIN',
-  Celsious = 'CELSIOUS',
-  Fahrenheit = 'FAHRENHEIT',
-  Rankine = 'RANKINE',
-}
-
-enum VolumeUnits {
-  Liters = 'LITERS',
-  Tablespoons = 'TABLESPOONS',
-  CubicInches = 'CUBIC_INCHES',
-  Cups = 'CUPS',
-  CubitFeet = 'CUBIC_FEET',
-  Gallons = 'GALLONS',
-}
-
+import { FormControl, FormGroup } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { Results, Unit } from '../model';
+import { CalculatorService } from '../service/calculator.service';
+import { isNumeric } from '../utils';
+import { CONVERSIONS } from './config';
 @Component({
   selector: 'app-calculator',
   templateUrl: './calculator.component.html',
@@ -30,67 +12,56 @@ enum VolumeUnits {
 })
 export class CalculatorComponent implements OnInit {
   form: FormGroup;
-  units: string[];
-  isCorrect = false;
+  units: Unit[];
+  results: Observable<Results>;
+  showCorrectValue = false;
+  conversions = CONVERSIONS;
+  startingValueControl: FormControl;
+  convertedValueControl: FormControl;
 
-  conversions = [
-    {
-      name: 'Temperature',
-      units: ['Kelvin', 'Celsious', 'Fahrenheit', 'Rankine'],
-    },
-    {
-      name: 'Volume',
-      units: [
-        'Liters',
-        'Tablespoons',
-        'Cubic Inches',
-        'Cups',
-        'Cubic Feet',
-        'Gallons',
-      ],
-    },
-  ];
-  constructor(
-    private formBuilder: FormBuilder,
-    private calculatorService: CalculatorService
-  ) {}
+  constructor(private calculatorService: CalculatorService) {}
 
   ngOnInit(): void {
-    this.units = this.conversions[0].units;
-    this.form = this.formBuilder.group({
-      conversionType: [this.conversions[0]],
-      startingValue: [null, Validators.required],
-      startingUnit: [this.units[0], Validators.required],
-      convertedValue: [null, Validators.required],
-      convertedUnit: [this.units[1], Validators.required],
-    });
-
-    this.onChanges();
+    this.initializeForm();
+    this.handleConversionTypeChange();
   }
 
-  onChanges(): void {
+  private initializeForm(): void {
+    this.units = this.conversions[0].units;
+    const {
+      form,
+      startingValueControl,
+      convertedValueControl,
+    } = this.calculatorService.getForm();
+    this.form = form;
+    this.startingValueControl = startingValueControl;
+    this.convertedValueControl = convertedValueControl;
+  }
+
+  handleConversionTypeChange(): void {
     this.form.get('conversionType').valueChanges.subscribe((val) => {
       this.units = val.units;
-      this.form.get('startingValue').setValue(null);
+      this.startingValueControl.setValue(null);
       this.form.get('startingUnit').setValue(this.units[0]);
-      this.form.get('convertedValue').setValue(null);
+      this.convertedValueControl.setValue(null);
       this.form.get('convertedUnit').setValue(this.units[1]);
-      console.log(val);
     });
-  }
-
-  onTemperatureTypeChange(event): void {
-    console.log(event);
   }
 
   onSubmit(): void {
-    console.log(this.form.value);
     const {
-      conversionType,
       startingValue,
-      startingUnit,
+      startingUnit: { id: startingUnitId },
       convertedValue,
-      convertedUnit,
+      convertedUnit: { id: convertedUnitId },
     } = this.form.value;
+    if (isNumeric(startingValue) && isNumeric(convertedValue)) {
+      this.results = this.calculatorService.evaluateConversion(
+        startingValue,
+        startingUnitId,
+        convertedValue,
+        convertedUnitId
+      );
+    }
   }
 }

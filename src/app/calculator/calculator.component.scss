@@ -7,12 +7,26 @@
       .input-field {
         ::ng-deep .mat-form-field-wrapper {
           // Overriding angular material input bottom padding
-          margin-bottom: -1.2em;
+          // margin-bottom: -1.2em;
         }
       }
     }
   }
-  .results {
-    margin-top: 1.25em;
+
+  .aligned-with-icon {
+    position: absolute;
+    margin-top: 5px;
+    margin-left: 5px; /* optional */
+  }
+
+  mat-card {
+    width: 100%;
+    text-align: center;
+    mat-icon {
+      font-size: 40px;
+      vertical-align: middle;
+      position: relative;
+      bottom: 10px;
+    }
   }
 }
