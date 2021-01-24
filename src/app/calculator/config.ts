@@ -1,4 +1,6 @@
-export const CONVERSIONS = [
+import { ConversionType } from '../model';
+
+export const CONVERSIONS: ConversionType[] = [
   {
     name: 'Temperature',
     units: [
