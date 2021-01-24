@@ -12,11 +12,6 @@ export interface GetConvertedValueRequest {
   convertedUnit: string;
 }
 
-export interface Unit {
-  name: string;
-  id: string;
-}
-
 export interface Results {
   isCorrect: boolean;
   convertedValue: number;
@@ -26,4 +21,14 @@ export interface GetFormResponse {
   form: FormGroup;
   startingValueControl: FormControl;
   convertedValueControl: FormControl;
+}
+
+export interface ConversionType {
+  name: string;
+  units: Unit[];
+}
+
+export interface Unit {
+  name: string;
+  id: string;
 }
