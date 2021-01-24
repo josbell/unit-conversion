@@ -1,23 +1,25 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { Observable } from 'rxjs';
-import { Results, Unit } from '../model';
+import { Observable, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import { ConversionType, Results, Unit } from '../model';
 import { CalculatorService } from '../service/calculator.service';
-import { isNumeric } from '../utils';
+import { isNumeric, jsonDeepCopy } from '../utils';
 import { CONVERSIONS } from './config';
 @Component({
   selector: 'app-calculator',
   templateUrl: './calculator.component.html',
   styleUrls: ['./calculator.component.scss'],
 })
-export class CalculatorComponent implements OnInit {
+export class CalculatorComponent implements OnInit, OnDestroy {
   form: FormGroup;
   units: Unit[];
   results: Observable<Results>;
   showCorrectValue = false;
-  conversions = CONVERSIONS;
+  readonly conversions: ConversionType[] = jsonDeepCopy(CONVERSIONS);
   startingValueControl: FormControl;
   convertedValueControl: FormControl;
+  private unsubscribe = new Subject<void>();
 
   constructor(private calculatorService: CalculatorService) {}
 
@@ -38,14 +40,17 @@ export class CalculatorComponent implements OnInit {
     this.convertedValueControl = convertedValueControl;
   }
 
-  handleConversionTypeChange(): void {
-    this.form.get('conversionType').valueChanges.subscribe((val) => {
-      this.units = val.units;
-      this.startingValueControl.setValue(null);
-      this.form.get('startingUnit').setValue(this.units[0]);
-      this.convertedValueControl.setValue(null);
-      this.form.get('convertedUnit').setValue(this.units[1]);
-    });
+  private handleConversionTypeChange(): void {
+    this.form
+      .get('conversionType')
+      .valueChanges.pipe(takeUntil(this.unsubscribe))
+      .subscribe((val: ConversionType) => {
+        this.units = jsonDeepCopy(val.units);
+        this.startingValueControl.setValue(null);
+        this.form.get('startingUnit').setValue({ ...this.units[0] });
+        this.convertedValueControl.setValue(null);
+        this.form.get('convertedUnit').setValue({ ...this.units[1] });
+      });
   }
 
   onSubmit(): void {
@@ -63,5 +68,9 @@ export class CalculatorComponent implements OnInit {
         convertedUnitId
       );
     }
+  }
+
+  ngOnDestroy(): void {
+    this.unsubscribe.next();
   }
 }

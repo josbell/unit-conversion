@@ -9,7 +9,7 @@ import {
   GetConvertedValueResponse,
   GetFormResponse,
 } from '../model';
-import { roundToTenth } from '../utils';
+import { jsonDeepCopy, roundToTenth } from '../utils';
 
 @Injectable({
   providedIn: 'root',
@@ -23,7 +23,7 @@ export class CalculatorService {
     evaluateValue: number,
     convertedUnit: string
   ): Observable<any> {
-    this.api.useFunctionsEmulator('http://localhost:5001');
+    // this.api.useFunctionsEmulator('http://localhost:5001');
     return this.api
       .httpsCallable<GetConvertedValueRequest, GetConvertedValueResponse>(
         'getConvertedValue'
@@ -58,7 +58,10 @@ export class CalculatorService {
       conversionValueValidators
     );
     const form = new FormGroup({
-      conversionType: new FormControl(CONVERSIONS[0], Validators.required),
+      conversionType: new FormControl(
+        jsonDeepCopy(CONVERSIONS[0]),
+        Validators.required
+      ),
       startingValue: startingValueControl,
       startingUnit: new FormControl(
         CONVERSIONS[0].units[0],
