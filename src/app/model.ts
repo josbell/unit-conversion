@@ -1,7 +1,7 @@
 import { FormControl, FormGroup } from '@angular/forms';
 
 export interface GetConvertedValueResponse {
-  status: 'success' | 'error';
+  status: string;
   convertedValue?: number;
   error?: string;
 }
@@ -13,8 +13,9 @@ export interface GetConvertedValueRequest {
 }
 
 export interface Results {
-  isCorrect: boolean;
-  convertedValue: number;
+  isCorrect?: boolean;
+  convertedValue?: number;
+  error?: boolean;
 }
 
 export interface GetFormResponse {

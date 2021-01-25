@@ -1,4 +1,4 @@
-import { CalculatorService } from '../service/calculator.service';
+import { CalculatorService } from '../services/calculator.service';
 import { CalculatorComponent } from './calculator.component';
 import { CONVERSIONS } from './config';
 import { fakeAsync } from '@angular/core/testing';

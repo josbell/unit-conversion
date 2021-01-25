@@ -3,7 +3,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ConversionType, Results, Unit } from '../model';
-import { CalculatorService } from '../service/calculator.service';
+import { CalculatorService } from '../services/calculator.service';
 import { isNumeric, jsonDeepCopy } from '../utils';
 import { CONVERSIONS } from './config';
 @Component({
@@ -67,6 +67,7 @@ export class CalculatorComponent implements OnInit, OnDestroy {
         convertedValue,
         convertedUnitId
       );
+      this.results.subscribe((val) => console.log(val));
     }
   }
 

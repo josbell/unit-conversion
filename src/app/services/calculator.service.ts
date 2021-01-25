@@ -1,21 +1,17 @@
 import { Injectable } from '@angular/core';
-import { AngularFireFunctions } from '@angular/fire/functions';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Observable, of } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { Observable, of, OperatorFunction } from 'rxjs';
+import { catchError, switchMap } from 'rxjs/operators';
 import { CONVERSIONS } from '../calculator/config';
-import {
-  GetConvertedValueRequest,
-  GetConvertedValueResponse,
-  GetFormResponse,
-} from '../model';
+import { GetConvertedValueResponse, GetFormResponse, Results } from '../model';
 import { jsonDeepCopy, roundToTenth } from '../utils';
+import { ApiService } from './api.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CalculatorService {
-  constructor(private api: AngularFireFunctions) {}
+  constructor(private api: ApiService) {}
 
   evaluateConversion(
     startingValue: number,
@@ -25,22 +21,35 @@ export class CalculatorService {
   ): Observable<any> {
     // this.api.useFunctionsEmulator('http://localhost:5001');
     return this.api
-      .httpsCallable<GetConvertedValueRequest, GetConvertedValueResponse>(
-        'getConvertedValue'
-      )({
+      .getConvertedValue({
         startingValue,
         startingUnit,
         convertedUnit,
       })
-      .pipe(
-        switchMap((response: GetConvertedValueResponse) => {
-          let { convertedValue } = response;
+      .pipe<Results>(this.formatResults(evaluateValue));
+  }
+
+  handleError(error): Observable<any> {
+    return of(error);
+  }
+
+  private formatResults(
+    evaluateValue: number
+  ): OperatorFunction<GetConvertedValueResponse, Results> {
+    return switchMap(
+      (response: GetConvertedValueResponse): Observable<Results> => {
+        let { status, convertedValue } = response;
+        if (status === 'success') {
           convertedValue = roundToTenth(convertedValue);
           evaluateValue = roundToTenth(evaluateValue);
           const isCorrect = convertedValue === evaluateValue;
-          return of({ isCorrect, convertedValue });
-        })
-      );
+          const payload: Results = { isCorrect, convertedValue };
+          return of<Results>(payload);
+        } else {
+          return of({ error: true });
+        }
+      }
+    );
   }
 
   getForm(): GetFormResponse {

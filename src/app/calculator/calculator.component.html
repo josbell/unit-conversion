@@ -82,7 +82,13 @@
   *ngIf="results | async as data"
 >
   <mat-card>
-    <mat-card-title
+    <mat-card-title *ngIf="data.error"
+      >Something Went Wrong
+      <mat-icon aria-hidden="false" aria-label="Example home icon"
+        >mood_bad</mat-icon
+      >
+    </mat-card-title>
+    <mat-card-title *ngIf="!data.error"
       >{{ data.isCorrect ? "Correct!" : "Incorrect" }}
       <mat-icon aria-hidden="false" aria-label="Example home icon">{{
         data.isCorrect ? "mood" : "mood_bad"
@@ -90,7 +96,7 @@
     </mat-card-title>
   </mat-card>
 
-  <mat-card class="mt-20" *ngIf="showCorrectValue"
+  <mat-card class="mt-20" *ngIf="showCorrectValue && !data.error"
     ><mat-card-title
       >Correct Value: {{ data.convertedValue }}</mat-card-title
     ></mat-card
