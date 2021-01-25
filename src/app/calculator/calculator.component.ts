@@ -4,7 +4,7 @@ import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ConversionType, Results, Unit } from '../model';
 import { CalculatorService } from '../services/calculator.service';
-import { isNumeric, jsonDeepCopy } from '../utils';
+import { isNumeric } from '../utils';
 import { CONVERSIONS } from './config';
 @Component({
   selector: 'app-calculator',
@@ -16,7 +16,7 @@ export class CalculatorComponent implements OnInit, OnDestroy {
   units: Unit[];
   results: Observable<Results>;
   showCorrectValue = false;
-  readonly conversions: ConversionType[] = jsonDeepCopy(CONVERSIONS);
+  readonly conversions: ConversionType[] = CONVERSIONS;
   startingValueControl: FormControl;
   convertedValueControl: FormControl;
   private unsubscribe = new Subject<void>();
@@ -40,12 +40,20 @@ export class CalculatorComponent implements OnInit, OnDestroy {
     this.convertedValueControl = convertedValueControl;
   }
 
+  matchByName(optionOne, optionTwo): boolean {
+    return optionOne.name === optionTwo.name;
+  }
+
+  matchById(option1, option2): boolean {
+    return option1.id === option2.id;
+  }
+
   private handleConversionTypeChange(): void {
     this.form
       .get('conversionType')
       .valueChanges.pipe(takeUntil(this.unsubscribe))
       .subscribe((val: ConversionType) => {
-        this.units = jsonDeepCopy(val.units);
+        this.units = val.units;
         this.startingValueControl.setValue(null);
         this.form.get('startingUnit').setValue({ ...this.units[0] });
         this.convertedValueControl.setValue(null);
@@ -67,7 +75,6 @@ export class CalculatorComponent implements OnInit, OnDestroy {
         convertedValue,
         convertedUnitId
       );
-      this.results.subscribe((val) => console.log(val));
     }
   }
 

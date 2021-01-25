@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Observable, of, OperatorFunction } from 'rxjs';
-import { catchError, switchMap } from 'rxjs/operators';
+import { switchMap } from 'rxjs/operators';
 import { CONVERSIONS } from '../calculator/config';
 import { GetConvertedValueResponse, GetFormResponse, Results } from '../model';
-import { jsonDeepCopy, roundToTenth } from '../utils';
+import { roundToTenth } from '../utils';
 import { ApiService } from './api.service';
 
 @Injectable({
@@ -67,10 +67,7 @@ export class CalculatorService {
       conversionValueValidators
     );
     const form = new FormGroup({
-      conversionType: new FormControl(
-        jsonDeepCopy(CONVERSIONS[0]),
-        Validators.required
-      ),
+      conversionType: new FormControl(CONVERSIONS[0], Validators.required),
       startingValue: startingValueControl,
       startingUnit: new FormControl(
         CONVERSIONS[0].units[0],

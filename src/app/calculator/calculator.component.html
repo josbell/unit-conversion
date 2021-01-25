@@ -1,7 +1,11 @@
 <form [formGroup]="form" class="flex-column">
   <div class="flex-column">
     <mat-form-field appearance="outline">
-      <mat-select focused formControlName="conversionType">
+      <mat-select
+        focused
+        formControlName="conversionType"
+        [compareWith]="matchByName"
+      >
         <mat-option *ngFor="let conversion of conversions" [value]="conversion">
           {{ conversion.name }}
         </mat-option>
@@ -19,7 +23,7 @@
           [formControl]="startingValueControl"
           required
         />
-        <mat-hint>Question</mat-hint>
+        <mat-hint>Hint: Question</mat-hint>
         <mat-error
           *ngIf="
             startingValueControl.hasError('required') ||
@@ -30,7 +34,7 @@
         </mat-error>
       </mat-form-field>
       <mat-form-field appearance="outline">
-        <mat-select formControlName="startingUnit">
+        <mat-select formControlName="startingUnit" [compareWith]="matchById">
           <mat-option *ngFor="let unit of units" [value]="unit">
             {{ unit.name }}
           </mat-option>
@@ -47,7 +51,7 @@
           [formControl]="convertedValueControl"
           required
         />
-        <mat-hint>Student Answer</mat-hint>
+        <mat-hint>Hint: Student Answer</mat-hint>
         <mat-error
           *ngIf="
             convertedValueControl.hasError('required') ||
@@ -58,7 +62,7 @@
         </mat-error>
       </mat-form-field>
       <mat-form-field appearance="outline">
-        <mat-select formControlName="convertedUnit">
+        <mat-select formControlName="convertedUnit" [compareWith]="matchById">
           <mat-option *ngFor="let unit of units" [value]="unit">
             {{ unit.name }}
           </mat-option>
