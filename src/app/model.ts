@@ -22,6 +22,7 @@ export interface GetFormResponse {
   form: FormGroup;
   startingValueControl: FormControl;
   convertedValueControl: FormControl;
+  showAnswerControl: FormControl;
 }
 
 export interface ConversionType {

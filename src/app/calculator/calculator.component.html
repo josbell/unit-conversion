@@ -70,10 +70,7 @@
       </mat-form-field>
     </div>
   </div>
-  <mat-checkbox
-    #displayValue
-    class="mb-20"
-    (click)="showCorrectValue = !showCorrectValue"
+  <mat-checkbox #displayValue class="mb-20" formControlName="showAnswer"
     >Display Correct Answer</mat-checkbox
   >
   <button mat-raised-button color="primary" type="button" (click)="onSubmit()">
@@ -100,7 +97,7 @@
     </mat-card-title>
   </mat-card>
 
-  <mat-card class="mt-20" *ngIf="showCorrectValue && !data.error"
+  <mat-card class="mt-20" *ngIf="showAnswerControl.value && !data.error"
     ><mat-card-title
       >Correct Value: {{ data.convertedValue }}</mat-card-title
     ></mat-card

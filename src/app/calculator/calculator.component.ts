@@ -15,10 +15,10 @@ export class CalculatorComponent implements OnInit, OnDestroy {
   form: FormGroup;
   units: Unit[];
   results: Observable<Results>;
-  showCorrectValue = false;
   readonly conversions: ConversionType[] = CONVERSIONS;
   startingValueControl: FormControl;
   convertedValueControl: FormControl;
+  showAnswerControl: FormControl;
   private unsubscribe = new Subject<void>();
 
   constructor(private calculatorService: CalculatorService) {}
@@ -34,10 +34,12 @@ export class CalculatorComponent implements OnInit, OnDestroy {
       form,
       startingValueControl,
       convertedValueControl,
+      showAnswerControl,
     } = this.calculatorService.getForm();
     this.form = form;
     this.startingValueControl = startingValueControl;
     this.convertedValueControl = convertedValueControl;
+    this.showAnswerControl = showAnswerControl;
   }
 
   matchByName(optionOne, optionTwo): boolean {

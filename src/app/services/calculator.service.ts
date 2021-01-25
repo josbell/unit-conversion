@@ -86,6 +86,7 @@ export class CalculatorService {
       null,
       conversionValueValidators
     );
+    const showAnswerControl = new FormControl(false);
     const form = new FormGroup({
       conversionType: new FormControl(CONVERSIONS[0], Validators.required),
       startingValue: startingValueControl,
@@ -98,11 +99,13 @@ export class CalculatorService {
         CONVERSIONS[0].units[1],
         Validators.required
       ),
+      showAnswer: showAnswerControl,
     });
     return {
       form,
       startingValueControl,
       convertedValueControl,
+      showAnswerControl,
     };
   }
 
