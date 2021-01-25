@@ -14,8 +14,8 @@ export interface GetConvertedValueRequest {
 
 export interface Results {
   isCorrect?: boolean;
-  convertedValue?: number;
   error?: boolean;
+  answer?: string;
 }
 
 export interface GetFormResponse {

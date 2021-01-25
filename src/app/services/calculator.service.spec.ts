@@ -30,7 +30,10 @@ describe('CalculatorService', () => {
       };
       api.getConvertedValue.and.returnValue(of(response));
 
-      const expectedResults: Results = { isCorrect: true, convertedValue: 10 };
+      const expectedResults: Results = {
+        isCorrect: true,
+        answer: `50 F = 10 C`,
+      };
       service
         .evaluateConversion(
           startingValue,

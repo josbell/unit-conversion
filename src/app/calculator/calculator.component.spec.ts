@@ -101,7 +101,10 @@ describe('CalculatorComponent', () => {
           .setValue({ name: 'Celsious', id: 'C' });
 
         // Mock Api Response
-        const response: Results = { isCorrect: false, convertedValue: 26.85 };
+        const response: Results = {
+          isCorrect: false,
+          answer: `300 K = 26.85 C`,
+        };
         evaluateConversionSpy.and.returnValue(of(response));
 
         component.onSubmit();

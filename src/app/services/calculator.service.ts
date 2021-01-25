@@ -33,13 +33,14 @@ export class CalculatorService {
     evaluateValue: number,
     convertedUnit: string
   ): Observable<any> {
+    const data = {
+      startingValue,
+      startingUnit,
+      convertedUnit,
+    };
     return this.api
-      .getConvertedValue({
-        startingValue,
-        startingUnit,
-        convertedUnit,
-      })
-      .pipe<Results>(this.formatResults(evaluateValue));
+      .getConvertedValue(data)
+      .pipe<Results>(this.formatResults(evaluateValue, data));
   }
 
   handleError(error): Observable<any> {
@@ -51,7 +52,8 @@ export class CalculatorService {
    * @param evaluateValue Value to be compared with actual solution
    */
   private formatResults(
-    evaluateValue: number
+    evaluateValue: number,
+    { startingValue, startingUnit, convertedUnit }
   ): OperatorFunction<GetConvertedValueResponse, Results> {
     return switchMap(
       (response: GetConvertedValueResponse): Observable<Results> => {
@@ -60,8 +62,11 @@ export class CalculatorService {
           convertedValue = roundToTenth(convertedValue);
           evaluateValue = roundToTenth(evaluateValue);
           const isCorrect = convertedValue === evaluateValue;
-          const payload: Results = { isCorrect, convertedValue };
-          return of<Results>(payload);
+          const answer = `${startingValue} ${startingUnit} = ${convertedValue} ${convertedUnit}`;
+          return of({
+            isCorrect,
+            answer,
+          });
         } else {
           return of({ error: true });
         }
