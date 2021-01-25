@@ -1,25 +1,26 @@
 import { CalculatorService } from '../services/calculator.service';
 import { CalculatorComponent } from './calculator.component';
 import { CONVERSIONS } from './config';
-import { fakeAsync } from '@angular/core/testing';
+import { fakeAsync, flushMicrotasks } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { Results } from '../model';
 
 describe('CalculatorComponent', () => {
   let component: CalculatorComponent;
-  let service: jasmine.SpyObj<CalculatorService>;
+  let service: CalculatorService;
+  let evaluateConversionSpy: jasmine.Spy;
 
   beforeEach(() => {
-    service = jasmine.createSpyObj('calculatorService', [
-      'getForm',
-      'evaluateConversion',
-    ]);
+    service = new CalculatorService(null);
     component = new CalculatorComponent((service as any) as CalculatorService);
   });
 
   beforeEach(() => {
     // Bind actual method implementation to fake service injected in component
-    service.getForm.and.returnValue(new CalculatorService(null).getForm());
+    evaluateConversionSpy = spyOn(service, 'evaluateConversion');
+    spyOn(service, 'getForm').and.callThrough();
+    spyOn(service, 'getInputValidators').and.callThrough();
+
     component.ngOnInit();
   });
 
@@ -40,31 +41,53 @@ describe('CalculatorComponent', () => {
       expect(service.getForm).toHaveBeenCalled();
     });
 
-    it('should setup subscription to reset form when conversionType dropdown changes', fakeAsync(() => {
-      // Change initial state of form to make sure form is actually getting reset
-      const { startingValueControl, convertedValueControl, form } = component;
+    describe('On Conversion Type Change', () => {
+      it('should reset form and load new unit options', fakeAsync(() => {
+        // Change initial state of form to make sure form is actually getting reset
+        const { startingValueControl, convertedValueControl, form } = component;
 
-      startingValueControl.setValue(4);
-      convertedValueControl.setValue(5);
+        startingValueControl.setValue(4);
+        convertedValueControl.setValue(5);
 
-      // Changing conversionTypeControl value triggers form reset
-      form.get('conversionType').setValue(CONVERSIONS[1], { emitEvent: true });
+        // Changing conversionTypeControl value triggers form reset
+        form
+          .get('conversionType')
+          .setValue(CONVERSIONS[1], { emitEvent: true });
 
-      expect(component.units).toEqual(CONVERSIONS[1].units);
-      expect(startingValueControl.value).toBe(null);
-      expect(convertedValueControl.value).toBe(null);
-      expect(form.get('startingUnit').value).toEqual(CONVERSIONS[1].units[0]);
-      expect(form.get('convertedUnit').value).toEqual(CONVERSIONS[1].units[1]);
-    }));
+        expect(component.units).toEqual(CONVERSIONS[1].units);
+        expect(startingValueControl.value).toBe(null);
+        expect(convertedValueControl.value).toBe(null);
+        expect(form.get('startingUnit').value).toEqual(CONVERSIONS[1].units[0]);
+        expect(form.get('convertedUnit').value).toEqual(
+          CONVERSIONS[1].units[1]
+        );
+        flushMicrotasks();
+      }));
+
+      it('should change input validators depending on conversion type config', fakeAsync(() => {
+        // Change initial state of form to make sure form is actually getting reset
+        const { startingValueControl, convertedValueControl, form } = component;
+
+        // Changing conversionTypeControl value triggers form reset
+        form
+          .get('conversionType')
+          .setValue(CONVERSIONS[1], { emitEvent: true });
+
+        startingValueControl.setValue(-1);
+        convertedValueControl.setValue('-5');
+
+        expect(startingValueControl.hasError('min')).toBe(true);
+        expect(convertedValueControl.hasError('min')).toBe(true);
+        expect(form.get('startingUnit').value).toEqual(CONVERSIONS[1].units[0]);
+        expect(form.get('convertedUnit').value).toEqual(
+          CONVERSIONS[1].units[1]
+        );
+        flushMicrotasks();
+      }));
+    });
   });
 
   describe('onSubmit', () => {
-    beforeEach(() => {
-      // Bind actual method implementation to fake service injected in component
-      service.getForm.and.returnValue(new CalculatorService(null).getForm());
-      component.ngOnInit();
-    });
-
     describe('Happy path', () => {
       it('should evaluate when onSubmit is called and input data is valid', () => {
         // Initialize form data
@@ -79,7 +102,7 @@ describe('CalculatorComponent', () => {
 
         // Mock Api Response
         const response: Results = { isCorrect: false, convertedValue: 26.85 };
-        service.evaluateConversion.and.returnValue(of(response));
+        evaluateConversionSpy.and.returnValue(of(response));
 
         component.onSubmit();
 
@@ -97,7 +120,19 @@ describe('CalculatorComponent', () => {
     });
 
     describe('Form Validation', () => {
-      const nonNumericValues = ['abc', ' ', 'e23', '#$%', null, [], {}];
+      const nonNumericValues = [
+        'abc',
+        ' ',
+        'e23',
+        '12,',
+        '#$%',
+        null,
+        '',
+        [],
+        {},
+      ];
+      const numericValues = [123, 12.45, '12', 0, '0'];
+      const negativeValues = [-2, -100, -0];
 
       it('should not make api call if starting value is string', () => {
         for (const value of nonNumericValues) {

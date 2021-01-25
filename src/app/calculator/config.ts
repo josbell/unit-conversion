@@ -3,6 +3,7 @@ import { ConversionType } from '../model';
 export const CONVERSIONS: ConversionType[] = [
   {
     name: 'Temperature',
+    allowNegative: true,
     units: [
       { name: 'Kelvin', id: 'K' },
       { name: 'Celsious', id: 'C' },
@@ -12,6 +13,7 @@ export const CONVERSIONS: ConversionType[] = [
   },
   {
     name: 'Volume',
+    allowNegative: false,
     units: [
       { name: 'Liters', id: 'l' },
       { name: 'Tablespoons', id: 'Tbs' },

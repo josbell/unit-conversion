@@ -1,3 +1,4 @@
+import { ValidatorFn } from '@angular/forms';
 import { of } from 'rxjs';
 import { Results } from '../model';
 import { ApiService } from './api.service';
@@ -59,6 +60,18 @@ describe('CalculatorService', () => {
         .subscribe((res) => {
           expect(res).toEqual(expectedResults);
         });
+    });
+  });
+
+  describe('getInputValidators', () => {
+    it('should include min validator if negative numbers are not allowed', () => {
+      const validators: ValidatorFn[] = service.getInputValidators(false);
+      expect(validators.length).toBe(3);
+    });
+
+    it('should not include min validator if negative numbers are allowed', () => {
+      const validators: ValidatorFn[] = service.getInputValidators(true);
+      expect(validators.length).toBe(2);
     });
   });
 });

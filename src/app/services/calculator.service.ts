@@ -1,5 +1,10 @@
 import { Injectable } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import {
+  FormControl,
+  FormGroup,
+  ValidatorFn,
+  Validators,
+} from '@angular/forms';
 import { Observable, of, OperatorFunction } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { CONVERSIONS } from '../calculator/config';
@@ -13,6 +18,15 @@ import { ApiService } from './api.service';
 export class CalculatorService {
   constructor(private api: ApiService) {}
 
+  /**
+   * Calls coverter api to get actual conversion value
+   * It then compares with value submitted by user
+   * and returns whether user was correct or not along with actual value
+   * @param startingValue Value that will be converted
+   * @param startingUnit Unit that will be converted
+   * @param evaluateValue Value to be evaluated
+   * @param convertedUnit Unit that value will be converted to
+   */
   evaluateConversion(
     startingValue: number,
     startingUnit: string,
@@ -32,6 +46,10 @@ export class CalculatorService {
     return of(error);
   }
 
+  /**
+   * Transforms response from unit converter api into data that can be consumed by template
+   * @param evaluateValue Value to be compared with actual solution
+   */
   private formatResults(
     evaluateValue: number
   ): OperatorFunction<GetConvertedValueResponse, Results> {
@@ -51,12 +69,15 @@ export class CalculatorService {
     );
   }
 
+  /**
+   * Initalizes Calculator Form
+   */
   getForm(): GetFormResponse {
-    const conversionValueValidators = [
-      Validators.required,
-      Validators.pattern('^[0-9]*$'),
-    ];
+    const conversionValueValidators = this.getInputValidators(
+      CONVERSIONS[0].allowNegative
+    );
 
+    // Initializing these separately to provide handle as output
     const startingValueControl = new FormControl(
       null,
       conversionValueValidators
@@ -83,5 +104,21 @@ export class CalculatorService {
       startingValueControl,
       convertedValueControl,
     };
+  }
+
+  /**
+   * Returns Validators for Numeric Inputs with option to
+   * allow only positive numbers or negative as well
+   * @param allowNegative Allows negative numbers
+   */
+  getInputValidators(allowNegative = true): ValidatorFn[] {
+    const conversionValueValidators = [
+      Validators.required,
+      Validators.pattern('^[+]?([0-9]+(?:[.][0-9]*)?|.[0-9]+)$'),
+    ];
+    if (!allowNegative) {
+      conversionValueValidators.push(Validators.min(0));
+    }
+    return conversionValueValidators;
   }
 }

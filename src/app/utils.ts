@@ -3,7 +3,7 @@ export function roundToTenth(num: number): number {
 }
 
 export function isNumeric(num: number | string): boolean {
-  return num && !isNaN(parseFloat(String(num))) && isFinite(Number(num));
+  return !isNaN(parseFloat(String(num))) && isFinite(Number(num));
 }
 
 export function jsonDeepCopy<T>(obj: T): T {

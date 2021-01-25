@@ -10,6 +10,11 @@ import { GetConvertedValueRequest, GetConvertedValueResponse } from '../model';
 export class ApiService {
   constructor(private fireFunctions: AngularFireFunctions) {}
 
+  /**
+   * Calls API to fetch appropriate value in new unit
+   * @param data Example: {startingValue: 1, startingUnitId: 'lb', convertedUnit: 'oz'}
+   * In this example response would be {status: 'success', convertedUnit: 16}
+   */
   getConvertedValue(
     data: GetConvertedValueRequest
   ): Observable<GetConvertedValueResponse> {

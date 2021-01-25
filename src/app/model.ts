@@ -26,6 +26,7 @@ export interface GetFormResponse {
 
 export interface ConversionType {
   name: string;
+  allowNegative: boolean;
   units: Unit[];
 }
 

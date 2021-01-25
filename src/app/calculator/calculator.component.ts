@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, ValidatorFn } from '@angular/forms';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ConversionType, Results, Unit } from '../model';
@@ -54,10 +54,16 @@ export class CalculatorComponent implements OnInit, OnDestroy {
       .valueChanges.pipe(takeUntil(this.unsubscribe))
       .subscribe((val: ConversionType) => {
         this.units = val.units;
-        this.startingValueControl.setValue(null);
         this.form.get('startingUnit').setValue({ ...this.units[0] });
-        this.convertedValueControl.setValue(null);
         this.form.get('convertedUnit').setValue({ ...this.units[1] });
+
+        const newValidators: ValidatorFn[] = this.calculatorService.getInputValidators(
+          val.allowNegative
+        );
+        this.startingValueControl.reset();
+        this.convertedValueControl.reset();
+        this.startingValueControl.setValidators(newValidators);
+        this.convertedValueControl.setValidators(newValidators);
       });
   }
 
@@ -68,7 +74,11 @@ export class CalculatorComponent implements OnInit, OnDestroy {
       convertedValue,
       convertedUnit: { id: convertedUnitId },
     } = this.form.value;
-    if (isNumeric(startingValue) && isNumeric(convertedValue)) {
+    if (
+      isNumeric(startingValue) &&
+      isNumeric(convertedValue) &&
+      this.form.valid
+    ) {
       this.results = this.calculatorService.evaluateConversion(
         startingValue,
         startingUnitId,
