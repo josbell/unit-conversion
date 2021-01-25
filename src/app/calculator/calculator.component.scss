@@ -2,14 +2,12 @@
   margin-top: 10%;
   width: 300px;
   form {
+    .equal-sign-divider {
+      font-size: 25px;
+      color: #70757a;
+    }
     .input-group {
-      width: 145px;
-      .input-field {
-        ::ng-deep .mat-form-field-wrapper {
-          // Overriding angular material input bottom padding
-          // margin-bottom: -1.2em;
-        }
-      }
+      width: 130px;
     }
   }
 
