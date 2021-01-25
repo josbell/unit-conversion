@@ -17,6 +17,6 @@ export class ApiService {
       .httpsCallable<GetConvertedValueRequest, GetConvertedValueResponse>(
         'getConvertedValue'
       )(data)
-      .pipe(catchError((err) => of({ status: 'error' })));
+      .pipe(catchError((_err) => of({ status: 'error' })));
   }
 }

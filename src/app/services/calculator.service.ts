@@ -19,7 +19,6 @@ export class CalculatorService {
     evaluateValue: number,
     convertedUnit: string
   ): Observable<any> {
-    // this.api.useFunctionsEmulator('http://localhost:5001');
     return this.api
       .getConvertedValue({
         startingValue,
