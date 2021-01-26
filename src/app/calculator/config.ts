@@ -6,7 +6,7 @@ export const CONVERSIONS: ConversionType[] = [
     allowNegative: true,
     units: [
       { name: 'Kelvin', id: 'K' },
-      { name: 'Celsious', id: 'C' },
+      { name: 'Celsius', id: 'C' },
       { name: 'Fahrenheit', id: 'F' },
       { name: 'Rankine', id: 'R' },
     ],

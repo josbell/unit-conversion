@@ -13,17 +13,16 @@
     </mat-form-field>
   </div>
 
-  <div class="flex-row space-between">
+  <div class="flex-row space-between mt-5">
     <div class="flex-column input-group">
       <mat-form-field appearance="outline" class="input-field">
-        <mat-label>Starting Value</mat-label>
         <input
           matInput
           type="number"
           [formControl]="startingValueControl"
           required
         />
-        <mat-hint>Hint: Question</mat-hint>
+        <mat-hint>Question</mat-hint>
         <mat-error
           *ngIf="
             startingValueControl.hasError('required') ||
@@ -33,7 +32,7 @@
           Please enter valid number
         </mat-error>
       </mat-form-field>
-      <mat-form-field appearance="outline">
+      <mat-form-field appearance="outline" class="mt-10">
         <mat-select formControlName="startingUnit" [compareWith]="matchById">
           <mat-option *ngFor="let unit of units" [value]="unit">
             {{ unit.name }}
@@ -46,14 +45,13 @@
 
     <div class="flex-column input-group">
       <mat-form-field appearance="outline" class="input-field">
-        <mat-label>Converted Value</mat-label>
         <input
           matInput
           type="number"
           [formControl]="convertedValueControl"
           required
         />
-        <mat-hint>Hint: Student Answer</mat-hint>
+        <mat-hint>Your Guess</mat-hint>
         <mat-error
           *ngIf="
             convertedValueControl.hasError('required') ||
@@ -63,7 +61,7 @@
           Please enter valid number
         </mat-error>
       </mat-form-field>
-      <mat-form-field appearance="outline">
+      <mat-form-field appearance="outline" class="mt-10">
         <mat-select formControlName="convertedUnit" [compareWith]="matchById">
           <mat-option *ngFor="let unit of units" [value]="unit">
             {{ unit.name }}
